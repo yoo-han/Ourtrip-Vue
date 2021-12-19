@@ -1,49 +1,82 @@
 <template>
-  <div class="dashboard">
-    <v-navigation-drawer class="fullheight" width="256" permanent app fixed>
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="title"> Yohan Hadi Wijaya </v-list-item-title>
-          <v-list-item-subtitle> 190710182 </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-
-      <v-divider></v-divider>
-      <v-list dense nav>
-        <v-list-item
-          v-for="item in items"
-          :key="item.title"
-          link
-          tag="router-link"
-          :to="item.to"
-        >
-          <v-list-item-content>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </v-navigation-drawer>
-    <div class="grey lighten-4 fullheight pa-5">
-      <router-view></router-view>
-    </div>
-  </div>
+	<div class="dashboard">
+		<v-toolbar class="mt-0 pt-0 fixed-bar" dark>
+		
+			<v-toolbar-title >
+				<router-link :to="{ path: '/' }" tag="span" style="cursor: pointer">
+				<img :src="require('../assets/paper-plane.png')" class="logo" align-center center height="25px"/>
+				{{ appTitle }}
+				</router-link>
+			</v-toolbar-title>
+		
+		<v-spacer></v-spacer>
+		<v-toolbar-items class="hidden-xs-only">
+			<v-btn 
+			text
+			v-for="item in menuItems"
+			:key="item.title"
+			:to="item.path">
+			<v-icon left dark>{{ item.icon }}</v-icon>
+			{{ item.title }}
+				<v-list dense>
+					<v-list-tile
+						v-for="subItem in item.items"
+						:key="subItem.title"
+						@click="close"
+						router
+						:to="subItem.link"
+					>
+						<v-list-tile-title>{{ subItem.title }}</v-list-tile-title>
+					</v-list-tile>
+				</v-list>
+			</v-btn>
+		</v-toolbar-items>
+		</v-toolbar>
+		
+		<div class="fullheight">
+		<router-view></router-view>
+		</div>
+	</div>
 </template>
 
 <script>
 export default {
-  name: "Dashboard",
-  data() {
-    return {
-      items: [
-        { title: "Dashboard", to: "/" },
-        { title: "GD", to: "/gd" },
-      ],
-    };
-  },
+	name: "Dashboard",
+	data() {
+		return {
+			appTitle: 'OurTrip',
+			menuItems: [
+				{ title: "Home", path: "/home", icon: 'mdi-home'},
+				{ title: "Reservation", path: "/reservation", icon: 'mdi-book-plus'},
+				{ title: "History", path: "/history", icon: 'mdi-history'},
+				{ title: "Profile", path: "/profile", icon: 'mdi-account'},
+			],
+		};
+	},
+	methods: {
+		logout(){
+			localStorage.removeItem('id');
+			localStorage.removeItem('token');
+			this.$router.push({
+				name: 'Login',
+			});
+		}
+	}
 };
 </script>
+
 <style scoped>
 .fullheight {
-  min-height: 100vh !important;
+    min-height: 100vh !important;
+}
+.router {
+    text-decoration: none;
+    color: black;
+}
+.fixed-bar {
+  position: sticky;
+  position: -webkit-sticky; /* for Safari */
+  top: 0;
+  z-index: 2;
 }
 </style>
